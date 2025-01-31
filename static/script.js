@@ -99,7 +99,7 @@ async function displayChart() {
         if (chart) {
             chart.destroy(); 
         }
-
+        
         chart = new Chart(ctx, {
             type: 'line',
             data: chartData,
