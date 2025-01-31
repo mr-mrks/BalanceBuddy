@@ -1,3 +1,5 @@
+import 'chartjs-adapter-moment'; // Assuming you installed using npm
+    
 document.addEventListener('DOMContentLoaded', async () => {
     await populateAccountDropdown();
     displayChart();
@@ -71,6 +73,7 @@ async function displayChart() {
                 console.error(`Error fetching data for account ${account}:`, error);
                 // Optionally, display a warning message to the user
             }
+             updateBalanceTable(chartData.datasets);
         }
 
         chartData.labels = Object.keys(allBalances).sort();
