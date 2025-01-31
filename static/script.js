@@ -1,6 +1,3 @@
-import 'moment'; // Import moment.js
-import Chart from 'chart.js/auto'; // Import Chart.js with adapters
-
 document.addEventListener('DOMContentLoaded', async () => {
     await populateAccountDropdown();
     displayChart();
@@ -41,8 +38,8 @@ async function displayChart() {
         const accounts = await response.json();
 
         const chartData = {
-            labels: [],
-            datasets: []
+            labels:,
+            datasets:
         };
 
         const allBalances = {};
@@ -161,9 +158,9 @@ function updateBalanceTable(datasets) {
     let totalBalance = 0;
 
     datasets.forEach(dataset => {
-        if (dataset.label !== 'Total') {
+        if (dataset.label!== 'Total') {
             const lastDataPoint = dataset.data[dataset.data.length - 1];
-            const balance = lastDataPoint ? lastDataPoint.y : 0;
+            const balance = lastDataPoint? lastDataPoint.y: 0;
             totalBalance += balance;
 
             const row = table.insertRow();
@@ -193,28 +190,4 @@ addBalanceForm.addEventListener('submit', async (event) => {
 
     const account = document.getElementById('account-select').value;
     const balance = parseFloat(document.getElementById('balance').value);
-    const date = document.getElementById('date').value;
-
-    try {
-        const response = await fetch(`/api/balance/${account}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ balance: balance, date: date })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(errorData.error || 'Error adding balance.');
-            return;
-        }
-
-        alert('Balance added successfully!');
-        displayChart();
-        addBalanceForm.reset();
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred.');
-    }
-});
+    const date = document.getElementById('date').value
