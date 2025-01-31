@@ -1,4 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory
+import os 
+import json
+
+DATA_DIR = "data"
 
 app = Flask(__name__, static_folder='static')
 
