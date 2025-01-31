@@ -38,8 +38,8 @@ async function displayChart() {
         const accounts = await response.json();
 
         const chartData = {
-            labels:,
-            datasets:
+            labels:[],
+            datasets:[]
         };
 
         const allBalances = {};
