@@ -1,6 +1,10 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
+import os
+import json
 
-app = Flask(__name__, static_folder='static') 
+DATA_DIR = "data" 
+
+app = Flask(__name__, static_folder='static')
 
 @app.route('/')
 def index():
@@ -9,11 +13,15 @@ def index():
 @app.route('/api/accounts', methods=['GET'])
 def get_accounts():
     """Get a list of all account names."""
-    accounts = []
-    for filename in os.listdir(DATA_DIR):
-        if filename.endswith(".json"):
-            accounts.append(filename[:-5])  # Remove ".json"
-    return jsonify(accounts)
+    try:
+        accounts = []
+        for filename in os.listdir(DATA_DIR):
+            if filename.endswith(".json"):
+                accounts.append(filename[:-5])
+        return jsonify(accounts)
+    except FileNotFoundError:
+        os.makedirs(DATA_DIR, exist_ok=True)  # Create the directory if it doesn't exist
+        return jsonify([])  # Return an empty list if no accounts exist
 
 @app.route('/api/account', methods=['POST'])
 def create_account():
