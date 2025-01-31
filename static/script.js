@@ -54,9 +54,9 @@ async function displayChart() {
 
                 chartData.datasets.push({
                     label: account,
-                    data: accountData.map(entry => ({ x: entry.date, y: entry.balance })),
-                    borderColor: getRandomColor(),
-                    fill: false,
+                    data: accountData.map(entry => ({ x: entry.date, y: entry.balance })), 
+                    borderColor: getRandomColor(), 
+                    fill: false, 
                     tension: 0.4
                 });
 
