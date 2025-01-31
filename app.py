@@ -1,8 +1,4 @@
-from flask import Flask, request, jsonify
-import os
-import json
-
-DATA_DIR = "data" 
+from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__, static_folder='static')
 
