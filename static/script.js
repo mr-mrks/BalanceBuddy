@@ -1,3 +1,6 @@
+import 'moment'; // Import moment.js
+import Chart from 'chart.js/auto'; // Import Chart.js with adapters
+
 document.addEventListener('DOMContentLoaded', async () => {
     await populateAccountDropdown();
     displayChart();
@@ -30,102 +33,119 @@ async function populateAccountDropdown() {
 }
 
 async function displayChart() {
-    const response = await fetch('/api/accounts');
-    const accounts = await response.json();
+    try {
+        const response = await fetch('/api/accounts');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const accounts = await response.json();
 
-    const chartData = {
-        labels: [],
-        datasets: []
-    };
+        const chartData = {
+            labels: [],
+            datasets: []
+        };
 
-    const allBalances = {};
+        const allBalances = {};
 
-    for (const account of accounts) {
-        const accountResponse = await fetch(`/api/balance/${account}`);
-        const accountData = await accountResponse.json();
+        for (const account of accounts) {
+            try {
+                const accountResponse = await fetch(`/api/balance/${account}`);
+                if (!accountResponse.ok) {
+                    throw new Error(`HTTP error! status: ${accountResponse.status}`);
+                }
+                const accountData = await accountResponse.json();
+
+                chartData.datasets.push({
+                    label: account,
+                    data: accountData.map(entry => ({ x: entry.date, y: entry.balance })),
+                    borderColor: getRandomColor(),
+                    fill: false,
+                    tension: 0.4
+                });
+
+                accountData.forEach(entry => {
+                    const date = entry.date;
+                    if (!allBalances[date]) {
+                        allBalances[date] = {};
+                    }
+                    allBalances[date][account] = entry.balance;
+                });
+            } catch (error) {
+                console.error(`Error fetching data for account ${account}:`, error);
+                // Optionally, display a warning message to the user
+            }
+        }
+
+        chartData.labels = Object.keys(allBalances).sort();
+
+        const totalBalanceData = chartData.labels.map(date => {
+            let total = 0;
+            for (const account in allBalances[date]) {
+                total += allBalances[date][account];
+            }
+            return total;
+        });
 
         chartData.datasets.push({
-            label: account,
-            data: accountData.map(entry => ({ x: entry.date, y: entry.balance })),
-            borderColor: getRandomColor(),
+            label: 'Total',
+            data: chartData.labels.map((date, index) => ({ x: date, y: totalBalanceData[index] })),
+            borderColor: '#000',
             fill: false,
             tension: 0.4
         });
 
-        accountData.forEach(entry => {
-            const date = entry.date;
-            if (!allBalances[date]) {
-                allBalances[date] = {};
-            }
-            allBalances[date][account] = entry.balance;
-        });
-    }
-
-    chartData.labels = Object.keys(allBalances).sort();
-
-    const totalBalanceData = chartData.labels.map(date => {
-        let total = 0;
-        for (const account in allBalances[date]) {
-            total += allBalances[date][account];
+        const ctx = document.getElementById('balance-chart').getContext('2d');
+        let chart = Chart.getChart('balance-chart'); 
+        if (chart) {
+            chart.destroy(); 
         }
-        return total;
-    });
 
-    chartData.datasets.push({
-        label: 'Total',
-        data: chartData.labels.map((date, index) => ({ x: date, y: totalBalanceData[index] })),
-        borderColor: '#000',
-        fill: false,
-        tension: 0.4
-    });
-
-    const ctx = document.getElementById('balance-chart').getContext('2d');
-    let chart = Chart.getChart('balance-chart'); 
-    if (chart) {
-        chart.destroy(); 
-    }
-
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            month: 'MMM YYYY'
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM YYYY'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
                         }
                     },
-                    title: {
-                        display: true,
-                        text: 'Date'
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value (EUR)' // Use EUR for consistency
+                        }
                     }
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Value (EUR)' // Use EUR for consistency
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: (context) => {
-                            const datasetLabel = context.dataset.label || '';
-                            const value = context.formattedValue;
-                            const date = context.chart.data.labels[context.dataIndex];
-                            return `${datasetLabel}: ${value} on ${date}`;
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const datasetLabel = context.dataset.label || '';
+                                const value = context.formattedValue;
+                                const date = context.chart.data.labels[context.dataIndex];
+                                return `${datasetLabel}: ${value} on ${date}`;
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+
+    } catch (error) {
+        console.error('Error displaying chart:', error);
+        // Optionally, display a user-friendly error message
+    }
 
     updateBalanceTable(chartData.datasets);
 }
