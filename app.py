@@ -16,8 +16,8 @@ def get_accounts():
                 accounts.append(filename[:-5])
         return jsonify(accounts)
     except FileNotFoundError:
-        os.makedirs(DATA_DIR, exist_ok=True)  # Create the directory if it doesn't exist
-        return jsonify([])  # Return an empty list if no accounts exist
+        os.makedirs(DATA_DIR, exist_ok=True) 
+        return jsonify([]) 
 
 @app.route('/api/account', methods=['POST'])
 def create_account():
