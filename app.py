@@ -2,58 +2,49 @@ from flask import Flask, request, jsonify
 import os
 import json
 
-DATA_DIR = "data"
-
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return "Hello from Flask!"  # Temporary route for testing
+DATA_DIR = 'data'
 
-@app.route('/api/accounts', methods=['GET'])
-def get_accounts():
-    """Get a list of all account names."""
-    accounts = []
-    for filename in os.listdir(DATA_DIR):
-        if filename.endswith(".json"):
-            accounts.append(filename[:-5])  # Remove ".json"
-    return jsonify(accounts)
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
 
-@app.route('/api/account', methods=['POST'])
-def create_account():
-    """Create a new account."""
-    data = request.get_json()
-    account_name = data['accountName']
-    file_path = os.path.join(DATA_DIR, f"{account_name}.json")
+@app.route('/add_account', methods=['POST'])
+def add_account():
+    account_name = request.json['account_name']
+    initial_balance = request.json['initial_balance']
+    account_file = os.path.join(DATA_DIR, f'{account_name}.json')
+    if os.path.exists(account_file):
+        return jsonify({'error': 'Account already exists'}), 400
+    with open(account_file, 'w') as f:
+        json.dump({'balance': initial_balance, 'history': []}, f)
+    return jsonify({'message': 'Account created successfully'}), 201
 
-    if os.path.exists(file_path):
-        return jsonify({"error": "Account already exists"}), 400 
+@app.route('/update_balance', methods=['POST'])
+def update_balance():
+    account_name = request.json['account_name']
+    new_balance = request.json['new_balance']
+    account_file = os.path.join(DATA_DIR, f'{account_name}.json')
+    if not os.path.exists(account_file):
+        return jsonify({'error': 'Account does not exist'}), 404
+    with open(account_file, 'r+') as f:
+        data = json.load(f)
+        data['history'].append({'balance': data['balance'], 'timestamp': request.json['timestamp']})
+        data['balance'] = new_balance
+        f.seek(0)
+        json.dump(data, f)
+        f.truncate()
+    return jsonify({'message': 'Balance updated successfully'}), 200
 
-    with open(file_path, 'w') as f:
-        json.dump([], f)  # Initialize with an empty list
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    account_name = request.args.get('account_name')
+    account_file = os.path.join(DATA_DIR, f'{account_name}.json')
+    if not os.path.exists(account_file):
+        return jsonify({'error': 'Account does not exist'}), 404
+    with open(account_file, 'r') as f:
+        data = json.load(f)
+    return jsonify(data), 200
 
-    return jsonify({"message": "Account created"}), 201
-
-@app.route('/api/balance/<account>', methods=['POST'])
-def add_balance(account):
-    """Add a new balance to the specified account."""
-    data = request.get_json()
-    date = data["date"]
-    balance = data["balance"]
-    file_path = os.path.join(DATA_DIR, f"{account}.json")
-
-    try:
-        with open(file_path, "r") as f:
-            existing_data = json.load(f)
-    except FileNotFoundError:
-        existing_data = []
-
-    existing_data.append({"date": date, "balance": balance})
-
-    with open(file_path, "w") as f:
-        json.dump(existing_data, f, indent=2)
-
-    return jsonify({"message": "Balance added"}), 201  # Created success code
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+if __name__ == '__main__':
+    app.run(debug=True)
