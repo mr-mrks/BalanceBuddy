@@ -7,6 +7,7 @@ if ($db === null) {
     echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
     exit;
 }
+var_dump($_POST); // Debugging line
 $db->beginTransaction();
 try {
     $account_id = $_POST['account_id'];
