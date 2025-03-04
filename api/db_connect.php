@@ -17,9 +17,11 @@ function get_db_connection() {
 }
 
 $db = get_db_connection();
+/*
 if (!$db) {
     echo "Database connection failed.";
 } else {
     echo "Database connection successful.";
 }
+*/
 ?>
