@@ -2,34 +2,54 @@
 <html>
 <head>
     <title>BalanceBuddy</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div id="chart-container">
-        <canvas id="balanceChart"></canvas>
-    </div>
+    <h1>BalanceBuddy</h1>
+
     <div id="current-balances"></div>
-    <div id="add-account-form">
-        <h2>Add Account</h2>
-        <input type="text" id="new-account-name" placeholder="Account Name">
-        <button id="add-account-button">Add</button>
-    </div>
-    <div id="add-balance-form">
-      <h2>Add Balance</h2>
-        <select id="account-select"></select>
-        <input type="date" id="balance-date">
-        <input type="number" id="balance-amount" placeholder="Amount">
-        <button id="add-balance-button">Add Balance</button>
-    </div>
-    <div id="update-balance-form">
-        <h2>Update Balance</h2>
-        <select id="update-account-select"></select>
-        <select id="update-balance-select"></select>
-        <input type="date" id="update-balance-date">
-        <input type="number" id="update-balance-amount" placeholder="Amount">
-        <button id="update-balance-button">Update Balance</button>
-    </div>
+
+    <h2>Add Account</h2>
+    <form id="add-account-form" method="POST">
+        <label for="new-account-name">Account Name:</label>
+        <input type="text" id="new-account-name"><br>
+        <button type="button" id="add-account-button">Add Account</button>
+    </form>
+
+    <h2>Add Balance</h2>
+    <form id="add-balance-form" method="POST">
+        <label for="account-select">Account:</label>
+        <select id="account-select"></select><br>
+
+        <label for="balance-date">Date:</label>
+        <input type="date" id="balance-date"><br>
+
+        <label for="balance-amount">Amount:</label>
+        <input type="number" id="balance-amount"><br>
+
+        <button type="button" id="add-balance-button">Add Balance</button>
+    </form>
+
+    <h2>Update Balance</h2>
+    <form id="update-balance-form" method="POST">
+        <label for="update-account-select">Account:</label>
+        <select id="update-account-select"></select><br>
+
+        <label for="update-balance-select">Balance Entry:</label>
+        <select id="update-balance-select"></select><br>
+
+        <label for="update-balance-date">Date:</label>
+        <input type="date" id="update-balance-date"><br>
+
+        <label for="update-balance-amount">Amount:</label>
+        <input type="number" id="update-balance-amount"><br>
+
+        <button type="button" id="update-balance-button">Update Balance</button>
+    </form>
+
+    <h2>Account Balance Chart</h2>
+    <canvas id="balanceChart" width="400" height="200"></canvas>
+
     <script src="script.js"></script>
 </body>
 </html>
