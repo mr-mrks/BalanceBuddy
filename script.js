@@ -110,9 +110,9 @@ async function addAccount() {
 
 async function addBalance() {
     try {
-        const accountId = document.getElementById('account-select').value;
+        const accountId = parseInt(document.getElementById('account-select').value);
         const entryDate = document.getElementById('balance-date').value;
-        const balance = document.getElementById('balance-amount').value;
+        const balance = parseFloat(document.getElementById('balance-amount').value);
         const response = await fetch('api/add_balance.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
