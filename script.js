@@ -46,7 +46,7 @@ async function fetchBalanceData() {
         const accountsData = await response.json();
 
         const datasets = [];
-        const allDates = new Set(); // To collect all unique dates
+        const allDates = new Set();
 
         if (accountsData && accountsData.data) {
             for (const account of accountsData.data) {
@@ -60,25 +60,40 @@ async function fetchBalanceData() {
                     const sortedData = balanceData.data.sort((a, b) => new Date(a.entry_date) - new Date(b.entry_date));
                     const reversedData = sortedData.reverse();
                     const labels = reversedData.map(entry => entry.entry_date);
-                    const balances = reversedData.map(entry => entry.balance);
+                    const balances = reversedData.map(entry => parseFloat(entry.balance));
 
                     labels.forEach(date => allDates.add(date));
 
                     datasets.push({
                         label: account.name,
                         data: balances,
-                        borderColor: getRandomColor(), // Function to generate random colors
-                        tension: 0.1,
-                        fill: false // No fill for line chart
+                        backgroundColor: getRandomColor(), // Use backgroundColor for bars
                     });
                 }
             }
         }
 
-        const sortedDates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b)).reverse(); // sort and reverse dates
+        const sortedDates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b)).reverse();
+
+        // Ensure all datasets have values for all dates
+        datasets.forEach(dataset => {
+            const filledData = [];
+            sortedDates.forEach(date => {
+                const index = dataset.label === "Account 1" ? dataset.data.length - sortedDates.indexOf(date) -1 : sortedDates.indexOf(date);
+                if (dataset.data[index] !== undefined) {
+                    filledData.push(dataset.data[index]);
+                } else {
+                    // Fill missing values with the previous value, or 0 if it's the first
+                    const prevValue = filledData.length > 0 ? filledData[filledData.length - 1] : 0;
+                    filledData.push(prevValue);
+                }
+            });
+            dataset.data = filledData;
+        });
+
         const ctx = document.getElementById('balanceChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar', // Change to 'bar'
             data: {
                 labels: sortedDates,
                 datasets: datasets,
@@ -86,11 +101,12 @@ async function fetchBalanceData() {
             options: {
                 scales: {
                     x: {
-                        reverse: false, // Ensure that the dates are in the correct order
+                        stacked: true, // Enable stacking
+                        reverse: false,
                     },
                     y: {
                         beginAtZero: true,
-                        stacked: false, // Set to false to remove stacking.
+                        stacked: true, // Enable stacking
                     }
                 }
             }
