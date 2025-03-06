@@ -18,6 +18,9 @@
             border: 1px solid #ccc;
             padding: 15px;
             width: 300px;
+            display: inline-block; /* Display forms in a row */
+            vertical-align: top;
+            margin-right: 10px;
         }
 
         label {
@@ -49,56 +52,53 @@
         }
 
         #balanceChart {
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-
     </style>
 </head>
 <body>
     <h1>BalanceBuddy</h1>
 
-    <div id="current-balances"></div>
-
-    <h2>Add Account</h2>
-    <form id="add-account-form" method="POST">
-        <label for="new-account-name">Account Name:</label>
-        <input type="text" id="new-account-name"><br>
-        <button type="button" id="add-account-button">Add Account</button>
-    </form>
-
-    <h2>Add Balance</h2>
-    <form id="add-balance-form" method="POST">
-        <label for="account-select">Account:</label>
-        <select id="account-select"></select><br>
-
-        <label for="balance-date">Date:</label>
-        <input type="date" id="balance-date"><br>
-
-        <label for="balance-amount">Amount:</label>
-        <input type="number" id="balance-amount"><br>
-
-        <button type="button" id="add-balance-button">Add Balance</button>
-    </form>
-
-    <h2>Update Balance</h2>
-    <form id="update-balance-form" method="POST">
-        <label for="update-account-select">Account:</label>
-        <select id="update-account-select"></select><br>
-
-        <label for="update-balance-select">Balance Entry:</label>
-        <select id="update-balance-select"></select><br>
-
-        <label for="update-balance-date">Date:</label>
-        <input type="date" id="update-balance-date"><br>
-
-        <label for="update-balance-amount">Amount:</label>
-        <input type="number" id="update-balance-amount"><br>
-
-        <button type="button" id="update-balance-button">Update Balance</button>
-    </form>
-
     <h2>Account Balance Chart</h2>
     <canvas id="balanceChart" width="400" height="200"></canvas>
+
+    <div id="current-balances"></div>
+
+    <h2>Forms</h2>
+    <form id="add-account-form" action="api/add_account.php" method="POST">
+        <label for="new-account-name">Account Name:</label>
+        <input type="text" id="new-account-name" name="name"><br>
+        <button type="submit" id="add-account-button">Add Account</button>
+    </form>
+
+    <form id="add-balance-form" action="api/add_balance.php" method="POST">
+        <label for="account-select">Account:</label>
+        <select id="account-select" name="account_id"></select><br>
+
+        <label for="balance-date">Date:</label>
+        <input type="date" id="balance-date" name="entry_date"><br>
+
+        <label for="balance-amount">Amount:</label>
+        <input type="number" id="balance-amount" name="balance"><br>
+
+        <button type="submit" id="add-balance-button">Add Balance</button>
+    </form>
+
+    <form id="update-balance-form" action="api/update_balance.php" method="POST">
+        <label for="update-account-select">Account:</label>
+        <select id="update-account-select" name="account_id"></select><br>
+
+        <label for="update-balance-select">Balance Entry:</label>
+        <select id="update-balance-select" name="balanceid"></select><br>
+
+        <label for="update-balance-date">Date:</label>
+        <input type="date" id="update-balance-date" name="entry_date"><br>
+
+        <label for="update-balance-amount">Amount:</label>
+        <input type="number" id="update-balance-amount" name="balance"><br>
+
+        <button type="submit" id="update-balance-button">Update Balance</button>
+    </form>
 
     <script src="script.js"></script>
 </body>
