@@ -37,6 +37,8 @@ async function fetchCurrentBalances() {
     }
 }
 
+const accountColors = {}; // Mapping of account IDs to colors
+
 async function fetchBalanceData() {
     try {
         const response = await fetch('api/get_accounts.php');
@@ -46,7 +48,7 @@ async function fetchBalanceData() {
         const accountsData = await response.json();
 
         const datasets = [];
-        const allDates = new Set();
+        const monthlyData = {}; // Aggregate data by month
 
         if (accountsData && accountsData.data) {
             for (const account of accountsData.data) {
@@ -57,59 +59,58 @@ async function fetchBalanceData() {
                 const balanceData = await accountResponse.json();
 
                 if (balanceData && balanceData.data) {
-                    const sortedData = balanceData.data.sort((a, b) => new Date(a.entry_date) - new Date(b.entry_date));
-                    const reversedData = sortedData.reverse();
-                    const labels = reversedData.map(entry => entry.entry_date);
-                    const balances = reversedData.map(entry => parseFloat(entry.balance));
-
-                    labels.forEach(date => allDates.add(date));
-
-                    datasets.push({
-                        label: account.name,
-                        data: balances,
-                        backgroundColor: getRandomColor(), // Use backgroundColor for bars
+                    balanceData.data.forEach(entry => {
+                        const date = new Date(entry.entry_date);
+                        const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                        if (!monthlyData[monthYear]) {
+                            monthlyData[monthYear] = {};
+                        }
+                        if (!monthlyData[monthYear][account.id]) {
+                            monthlyData[monthYear][account.id] = 0;
+                        }
+                        monthlyData[monthYear][account.id] += parseFloat(entry.balance);
                     });
                 }
             }
         }
 
-        const sortedDates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b)).reverse();
+        const labels = Object.keys(monthlyData).sort(); // Sort months
 
-        // Ensure all datasets have values for all dates
-        datasets.forEach(dataset => {
-            const filledData = [];
-            sortedDates.forEach(date => {
-                const index = dataset.label === "Account 1" ? dataset.data.length - sortedDates.indexOf(date) -1 : sortedDates.indexOf(date);
-                if (dataset.data[index] !== undefined) {
-                    filledData.push(dataset.data[index]);
-                } else {
-                    // Fill missing values with the previous value, or 0 if it's the first
-                    const prevValue = filledData.length > 0 ? filledData[filledData.length - 1] : 0;
-                    filledData.push(prevValue);
-                }
+        accountsData.data.forEach(account => {
+            const data = [];
+            labels.forEach(monthYear => {
+                data.push(monthlyData[monthYear][account.id] || 0);
             });
-            dataset.data = filledData;
+
+            if (!accountColors[account.id]) {
+                accountColors[account.id] = getRandomColor(); // Assign color if not already assigned
+            }
+
+            datasets.push({
+                label: account.name,
+                data: data,
+                backgroundColor: accountColors[account.id],
+            });
         });
 
         const ctx = document.getElementById('balanceChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar', // Change to 'bar'
+            type: 'bar',
             data: {
-                labels: sortedDates,
+                labels: labels,
                 datasets: datasets,
             },
             options: {
                 scales: {
                     x: {
-                        stacked: true, // Enable stacking
-                        reverse: false,
+                        stacked: true,
                     },
                     y: {
                         beginAtZero: true,
-                        stacked: true, // Enable stacking
-                    }
-                }
-            }
+                        stacked: true,
+                    },
+                },
+            },
         });
     } catch (error) {
         console.error('Error fetching balance data:', error);
