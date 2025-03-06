@@ -1,3 +1,18 @@
+function populateDateFields() {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
+
+    month = month < 10 ? '0' + month : month;
+    day = day < 10 ? '0' + day : day;
+
+    const formattedDate = `${year}-${month}-${day}`;
+
+    document.getElementById('balance-date').value = formattedDate;
+    document.getElementById('update-balance-date').value = formattedDate;
+}
+
 async function fetchCurrentBalances() {
     try {
         const response = await fetch('api/get_current_balances.php');
@@ -82,49 +97,13 @@ async function fetchAccounts() {
             });
             if(data.data.length > 0){
                 fetchBalanceData(data.data[0].id);
+                fetchBalancesForUpdate();
             }
         } else {
             console.error('Invalid or empty data received from get_accounts.php');
         }
     } catch (error) {
         console.error('Error fetching accounts:', error);
-    }
-}
-
-async function addAccount() {
-    try {
-        const name = document.getElementById('new-account-name').value;
-        const response = await fetch('api/add_account.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `name=${name}`
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        fetchAccounts();
-    } catch (error) {
-        console.error('Error adding account:', error);
-    }
-}
-
-async function addBalance() {
-    try {
-        const accountId = parseInt(document.getElementById('account-select').value);
-        const entryDate = document.getElementById('balance-date').value;
-        const balance = parseFloat(document.getElementById('balance-amount').value);
-        const response = await fetch('api/add_balance.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `account_id=${accountId}&entry_date=${entryDate}&balance=${balance}`
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        fetchCurrentBalances();
-        fetchBalanceData(accountId);
-    } catch (error) {
-        console.error('Error adding balance:', error);
     }
 }
 
@@ -153,30 +132,10 @@ async function fetchBalancesForUpdate() {
     }
 }
 
-async function updateBalance() {
-    try {
-        const balanceId = document.getElementById('update-balance-select').value;
-        const entryDate = document.getElementById('update-balance-date').value;
-        const balance = document.getElementById('update-balance-amount').value;
-        const response = await fetch('api/update_balance.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `balanceid=${balanceId}&entry_date=${entryDate}&balance=${balance}`
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        fetchCurrentBalances();
-        fetchBalanceData(document.getElementById('update-account-select').value);
-    } catch (error) {
-        console.error('Error updating balance:', error);
-    }
-}
-
-document.getElementById('add-account-button').addEventListener('click', addAccount);
-document.getElementById('add-balance-button').addEventListener('click', addBalance);
-document.getElementById('update-balance-button').addEventListener('click', updateBalance);
 document.getElementById('update-account-select').addEventListener('change', fetchBalancesForUpdate);
 
-fetchCurrentBalances();
-fetchAccounts();
+document.addEventListener('DOMContentLoaded', () => {
+    populateDateFields();
+    fetchCurrentBalances();
+    fetchAccounts();
+});
