@@ -37,42 +37,76 @@ async function fetchCurrentBalances() {
     }
 }
 
-async function fetchBalanceData(accountId) {
+async function fetchBalanceData() {
     try {
-        const response = await fetch(`api/get_balances.php?id=${accountId}`);
+        const response = await fetch('api/get_accounts.php');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        if (data && data.data) {
-            const labels = data.data.map(entry => entry.entry_date);
-            const balances = data.data.map(entry => entry.balance);
-            const ctx = document.getElementById('balanceChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Account Balance',
+        const accountsData = await response.json();
+
+        const datasets = [];
+        const allDates = new Set(); // To collect all unique dates
+
+        if (accountsData && accountsData.data) {
+            for (const account of accountsData.data) {
+                const accountResponse = await fetch(`api/get_balances.php?id=${account.id}`);
+                if (!accountResponse.ok) {
+                    throw new Error(`HTTP error! status: ${accountResponse.status}`);
+                }
+                const balanceData = await accountResponse.json();
+
+                if (balanceData && balanceData.data) {
+                    const sortedData = balanceData.data.sort((a, b) => new Date(a.entry_date) - new Date(b.entry_date));
+                    const reversedData = sortedData.reverse();
+                    const labels = reversedData.map(entry => entry.entry_date);
+                    const balances = reversedData.map(entry => entry.balance);
+
+                    labels.forEach(date => allDates.add(date));
+
+                    datasets.push({
+                        label: account.name,
                         data: balances,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                        borderColor: getRandomColor(), // Function to generate random colors
+                        tension: 0.1,
+                        fill: false // No fill for line chart
+                    });
+                }
+            }
+        }
+
+        const sortedDates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b)).reverse(); // sort and reverse dates
+        const ctx = document.getElementById('balanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: datasets,
+            },
+            options: {
+                scales: {
+                    x: {
+                        reverse: false, // Ensure that the dates are in the correct order
+                    },
+                    y: {
+                        beginAtZero: true,
+                        stacked: false, // Set to false to remove stacking.
                     }
                 }
-            });
-        } else {
-            console.error('Invalid or empty data received from get_balances.php');
-        }
+            }
+        });
     } catch (error) {
         console.error('Error fetching balance data:', error);
     }
+}
+
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 async function fetchAccounts() {
@@ -138,4 +172,5 @@ document.addEventListener('DOMContentLoaded', () => {
     populateDateFields();
     fetchCurrentBalances();
     fetchAccounts();
+    fetchBalanceData(); // Call fetchBalanceData without accountId
 });
