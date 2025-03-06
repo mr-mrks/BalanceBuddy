@@ -4,11 +4,13 @@ function populateDateFields() {
     let month = today.getMonth() + 1;
     let day = today.getDate();
 
+    // Pad month and day with leading zeros if necessary
     month = month < 10 ? '0' + month : month;
     day = day < 10 ? '0' + day : day;
 
     const formattedDate = `${year}-${month}-${day}`;
 
+    // Set the value of both date input fields
     document.getElementById('balance-date').value = formattedDate;
     document.getElementById('update-balance-date').value = formattedDate;
 }
