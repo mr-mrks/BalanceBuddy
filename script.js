@@ -82,8 +82,9 @@ async function fetchBalanceData() {
                 data.push(monthlyData[monthYear][account.id] || 0);
             });
 
+            // Assign color only if it's not already assigned
             if (!accountColors[account.id]) {
-                accountColors[account.id] = getRandomColor(); // Assign color if not already assigned
+                accountColors[account.id] = getRandomColor();
             }
 
             datasets.push({
@@ -125,7 +126,6 @@ function getRandomColor() {
     }
     return color;
 }
-
 async function fetchAccounts() {
     try {
         const response = await fetch('api/get_accounts.php');
