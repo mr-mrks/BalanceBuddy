@@ -92,6 +92,37 @@ tfoot th {
     padding: 20px;
 }
 
+.chart-controls {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 50%; /* 50% of chart width */
+            margin: 10px auto; /* Center below chart */
+        }
+
+        .chart-controls label,
+        .chart-controls input,
+        .chart-controls button {
+            margin: 0 5px;
+        }
+
+        .form-toggle {
+            display: flex;
+            justify-content: center; /* Center the buttons */
+            margin-bottom: 10px;
+        }
+
+        #balanceChart {
+            margin: 0 auto 20px auto; /* Center the chart */
+        }
+
+        /* Adjust chart width for large screens */
+        @media (min-width: 1200px) {
+            #balanceChart {
+                width: 80% !important; /* 80% width on large screens */
+            }
+        }
+
 /* Responsive Design */
 @media (max-width: 768px) {
     form {
