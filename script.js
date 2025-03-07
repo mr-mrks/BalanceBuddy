@@ -44,7 +44,7 @@ async function fetchCurrentBalances() {
 
 const accountColors = {}; // Mapping of account IDs to colors
 
-async function fetchBalanceData() {
+async function fetchBalanceData(startDate, endDate) {
     try {
         const response = await fetch('api/get_accounts.php');
         if (!response.ok) {
@@ -53,7 +53,7 @@ async function fetchBalanceData() {
         const accountsData = await response.json();
 
         const datasets = [];
-        const monthlyData = {}; // Aggregate data by month
+        const monthlyData = {};
 
         if (accountsData && accountsData.data) {
             for (const account of accountsData.data) {
@@ -66,20 +66,22 @@ async function fetchBalanceData() {
                 if (balanceData && balanceData.data) {
                     balanceData.data.forEach(entry => {
                         const date = new Date(entry.entry_date);
-                        const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-                        if (!monthlyData[monthYear]) {
-                            monthlyData[monthYear] = {};
+                        if ((!startDate || date >= new Date(startDate)) && (!endDate || date <= new Date(endDate))) {
+                            const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                            if (!monthlyData[monthYear]) {
+                                monthlyData[monthYear] = {};
+                            }
+                            if (!monthlyData[monthYear][account.id]) {
+                                monthlyData[monthYear][account.id] = 0;
+                            }
+                            monthlyData[monthYear][account.id] += parseFloat(entry.balance);
                         }
-                        if (!monthlyData[monthYear][account.id]) {
-                            monthlyData[monthYear][account.id] = 0;
-                        }
-                        monthlyData[monthYear][account.id] += parseFloat(entry.balance);
                     });
                 }
             }
         }
 
-        const labels = Object.keys(monthlyData).sort(); // Sort months
+        const labels = Object.keys(monthlyData).sort();
 
         accountsData.data.forEach(account => {
             const data = [];
@@ -87,7 +89,6 @@ async function fetchBalanceData() {
                 data.push(monthlyData[monthYear][account.id] || 0);
             });
 
-            // Assign color only if it's not already assigned
             if (!accountColors[account.id]) {
                 accountColors[account.id] = getRandomColor();
             }
@@ -195,4 +196,35 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCurrentBalances();
     fetchAccounts();
     fetchBalanceData(); // Call fetchBalanceData without accountId
+});
+
+document.getElementById('update-chart-button').addEventListener('click', () => {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    fetchBalanceData(startDate, endDate);
+});
+
+document.getElementById('show-add-account').addEventListener('click', () => {
+    document.getElementById('add-account-form').classList.add('active');
+    document.getElementById('add-balance-form').classList.remove('active');
+    document.getElementById('update-balance-form').classList.remove('active');
+});
+
+document.getElementById('show-add-balance').addEventListener('click', () => {
+    document.getElementById('add-account-form').classList.remove('active');
+    document.getElementById('add-balance-form').classList.add('active');
+    document.getElementById('update-balance-form').classList.remove('active');
+});
+
+document.getElementById('show-update-balance').addEventListener('click', () => {
+    document.getElementById('add-account-form').classList.remove('active');
+    document.getElementById('add-balance-form').classList.remove('active');
+    document.getElementById('update-balance-form').classList.add('active');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    populateDateFields();
+    fetchCurrentBalances();
+    fetchAccounts();
+    fetchBalanceData(); // Initial chart load
 });
