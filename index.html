@@ -6,55 +6,94 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: sans-serif;
-            margin: 20px;
-        }
+    font-family: 'Roboto', sans-serif; /* Use Roboto font */
+    margin: 16px;
+    background-color: #f8f9fa; /* Soft background color */
+    color: #333;
+    line-height: 1.6;
+}
 
-        h1, h2 {
-            margin-bottom: 15px;
-        }
+h1, h2 {
+    margin-bottom: 16px;
+    color: #212529;
+}
 
-        form {
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            width: 300px;
-            display: inline-block; /* Display forms in a row */
-            vertical-align: top;
-            margin-right: 10px;
-        }
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: calc(33% - 20px); /* Adjust width for responsive layout */
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    margin-right: 15px; /* Add margin between forms */
+}
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #495057;
+}
 
-        input, select, button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+button {
+    background-color: #007bff; /* Primary button color */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+button:hover {
+    background-color: #0056b3;
+}
 
-        th {
-            background-color: #f2f2f2;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-        #balanceChart {
-            margin-bottom: 20px;
-        }
+th, td {
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+#balanceChart {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    form {
+        width: 100%; /* Full width on smaller screens */
+        margin-right: 0; /* Remove right margin on smaller screens */
+    }
+}
     </style>
 </head>
 <body>
