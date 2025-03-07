@@ -101,24 +101,37 @@ async function fetchBalanceData(startDate, endDate) {
         });
 
         const ctx = document.getElementById('balanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets,
-            },
-            options: {
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        beginAtZero: true,
-                        stacked: true,
-                    },
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: datasets,
+        },
+        options: {
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        color: '#000' // Set x-axis tick color to black
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    stacked: true,
+                    ticks: {
+                        color: '#000' // Set y-axis tick color to black
+                    }
                 },
             },
-        });
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#000' // Set legend label color to black
+                    }
+                }
+            }
+        },
+    });
     } catch (error) {
         console.error('Error fetching balance data:', error);
     }
