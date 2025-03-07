@@ -99,6 +99,19 @@ th, tfoot th {
     margin: 0 5px;
 }
 
+.form-toggle button {
+    margin: 0 5px; /* Add spacing between buttons */
+}
+
+#chart-container {
+    width: 66.66%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 12px; /* Add rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box shadow */
+    background-color: #fff; /* Add background color */
+}
+
 .form-toggle {
     display: flex;
     justify-content: center;
