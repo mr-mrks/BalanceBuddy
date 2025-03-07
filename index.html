@@ -3,202 +3,66 @@
 <head>
     <title>BalanceBuddy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-
-        body {
-    font-family: 'Roboto', sans-serif; /* Use Roboto font */
-    margin: 16px;
-    background-color: #f8f9fa; /* Soft background color */
-    color: #333;
-    line-height: 1.6;
-}
-
-h1, h2 {
-    margin-bottom: 16px;
-    color: #212529;
-}
-
-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    width: calc(33% - 20px); /* Adjust width for responsive layout */
-    display: inline-block;
-    vertical-align: top;
-    box-sizing: border-box;
-    margin-right: 15px; /* Add margin between forms */
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #495057;
-}
-
-input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 1rem;
-}
-
-button {
-    background-color: #007bff; /* Primary button color */
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-th, td {
-    border-bottom: 1px solid #dee2e6;
-    padding: 12px 15px;
-    text-align: left;
-}
-
-th {
-    background-color: #e0f7fa; /* Light blue shade for header */
-}
-
-tfoot th {
-    background-color: #e0f7fa; /* Light blue shade for total row */
-}
-
-#balanceChart {
-    margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.chart-controls {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            width: 50%; /* 50% of chart width */
-            margin: 10px auto; /* Center below chart */
-        }
-
-        .chart-controls label,
-        .chart-controls input,
-        .chart-controls button {
-            margin: 0 5px;
-        }
-
-        .form-toggle {
-            display: flex;
-            justify-content: center; /* Center the buttons */
-            margin-bottom: 10px;
-        }
-
-        #balanceChart {
-            margin: 0 auto 20px auto; /* Center the chart */
-        }
-
-        /* Adjust chart width for large screens */
-        @media (min-width: 1200px) {
-            #balanceChart {
-                width: 80% !important; /* 80% width on large screens */
-            }
-        }
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    form {
-        width: 100%; /* Full width on smaller screens */
-        margin-right: 0; /* Remove right margin on smaller screens */
-    }
-}
-        
-        .form-container {
-            display: none;
-        }
-
-        .form-container.active {
-            display: block;
-        }
-
-        .form-toggle {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
-    <h1>BalanceBuddy</h1>
+    <div id="chart-container">
+        <h2>Account Balance Chart</h2>
+        <canvas id="balanceChart" width="400" height="200"></canvas>
+        <div class="chart-controls">
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date">
+            <button id="update-chart-button">Update Chart</button>
+        </div>
+    </div>
 
-    <h2>Account Balance Chart</h2>
-    <canvas id="balanceChart" width="400" height="200"></canvas>
-    <div class="chart-controls">
-        <label for="start-date">Start Date:</label>
-        <input type="date" id="start-date">
-        <label for="end-date">End Date:</label>
-        <input type="date" id="end-date">
-        <button id="update-chart-button">Update Chart</button>
+    <div id="form-container">
+        <h2>Forms</h2>
+        <div class="form-toggle">
+            <button id="show-add-account">Add Account</button>
+            <button id="show-add-balance">Add Balance</button>
+            <button id="show-update-balance">Update Balance</button>
+        </div>
+
+        <div id="add-account-form" class="form-container">
+            <form action="api/add_account.php" method="POST">
+                <label for="new-account-name">Account Name:</label>
+                <input type="text" name="name"><br>
+                <button type="submit">Add Account</button>
+            </form>
+        </div>
+
+        <div id="add-balance-form" class="form-container active">
+            <form action="api/add_balance.php" method="POST">
+                <label for="account-select">Account:</label>
+                <select id="account-select" name="account_id"></select><br>
+                <label for="balance-date">Date:</label>
+                <input type="date" id="balance-date" name="entry_date"><br>
+                <label for="balance-amount">Amount:</label>
+                <input type="number" name="balance"><br>
+                <button type="submit">Add Balance</button>
+            </form>
+        </div>
+
+        <div id="update-balance-form" class="form-container">
+            <form action="api/update_balance.php" method="POST">
+                <label for="update-account-select">Account:</label>
+                <select id="update-account-select" name="account_id"></select><br>
+                <label for="update-balance-select">Balance Entry:</label>
+                <select id="update-balance-select" name="balanceid"></select><br>
+                <label for="update-balance-date">Date:</label>
+                <input type="date" id="update-balance-date" name="entry_date"><br>
+                <label for="update-balance-amount">Amount:</label>
+                <input type="number" name="balance"><br>
+                <button type="submit">Update Balance</button>
+            </form>
+        </div>
     </div>
 
     <div id="current-balances"></div>
-
-    <h2>Forms</h2>
-    <div class="form-toggle">
-        <button id="show-add-account">Add Account</button>
-        <button id="show-add-balance">Add Balance</button>
-        <button id="show-update-balance">Update Balance</button>
-    </div>
-
-    <div id="add-account-form" class="form-container">
-        <form action="api/add_account.php" method="POST">
-            <label for="new-account-name">Account Name:</label>
-            <input type="text" name="name"><br>
-            <button type="submit">Add Account</button>
-        </form>
-    </div>
-
-    <div id="add-balance-form" class="form-container active">
-        <form action="api/add_balance.php" method="POST">
-            <label for="account-select">Account:</label>
-            <select id="account-select" name="account_id"></select><br>
-            <label for="balance-date">Date:</label>
-            <input type="date" id="balance-date" name="entry_date"><br>
-            <label for="balance-amount">Amount:</label>
-            <input type="number" name="balance"><br>
-            <button type="submit">Add Balance</button>
-        </form>
-    </div>
-
-    <div id="update-balance-form" class="form-container">
-        <form action="api/update_balance.php" method="POST">
-            <label for="update-account-select">Account:</label>
-            <select id="update-account-select" name="account_id"></select><br>
-            <label for="update-balance-select">Balance Entry:</label>
-            <select id="update-balance-select" name="balanceid"></select><br>
-            <label for="update-balance-date">Date:</label>
-            <input type="date" id="update-balance-date" name="entry_date"><br>
-            <label for="update-balance-amount">Amount:</label>
-            <input type="number" name="balance"><br>
-            <button type="submit">Update Balance</button>
-        </form>
-    </div>
 
     <script src="script.js"></script>
 </body>
