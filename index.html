@@ -148,14 +148,14 @@ tfoot th {
     <h1>BalanceBuddy</h1>
 
     <h2>Account Balance Chart</h2>
-    <div>
+    <canvas id="balanceChart" width="400" height="200"></canvas>
+    <div class="chart-controls">
         <label for="start-date">Start Date:</label>
         <input type="date" id="start-date">
         <label for="end-date">End Date:</label>
         <input type="date" id="end-date">
         <button id="update-chart-button">Update Chart</button>
     </div>
-    <canvas id="balanceChart" width="400" height="200"></canvas>
 
     <div id="current-balances"></div>
 
