@@ -89,49 +89,45 @@ async function fetchBalanceData(startDate, endDate) {
                 data.push(monthlyData[monthYear][account.id] || 0);
             });
 
-            if (!accountColors[account.id]) {
-                accountColors[account.id] = getRandomColor();
-            }
-
             datasets.push({
                 label: account.name,
                 data: data,
-                backgroundColor: accountColors[account.id],
+                backgroundColor: account.color, // Use color from database
             });
         });
 
         const ctx = document.getElementById('balanceChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: datasets,
-        },
-        options: {
-            scales: {
-                x: {
-                    stacked: true,
-                    ticks: {
-                        color: '#000' // Set x-axis tick color to black
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    stacked: true,
-                    ticks: {
-                        color: '#000' // Set y-axis tick color to black
-                    }
-                },
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets,
             },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#000' // Set legend label color to black
+            options: {
+                scales: {
+                    x: {
+                        stacked: true,
+                        ticks: {
+                            color: '#000'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        stacked: true,
+                        ticks: {
+                            color: '#000'
+                        }
+                    },
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#000'
+                        }
                     }
                 }
-            }
-        },
-    });
+            },
+        });
     } catch (error) {
         console.error('Error fetching balance data:', error);
     }
