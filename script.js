@@ -26,9 +26,12 @@ async function fetchCurrentBalances() {
             const balancesDiv = document.getElementById('current-balances');
             balancesDiv.innerHTML = '<h2>Current Balances</h2>';
             let table = '<table><thead><tr><th>Account</th><th>Balance</th><th>Last Updated</th></tr></thead><tbody>';
+            let totalBalance = 0;
             data.data.forEach(item => {
                 table += `<tr><td>${item.name}</td><td>${item.balance}</td><td>${item.entry_date}</td></tr>`;
+                totalBalance += parseFloat(item.balance);
             });
+            table += `<tr><th>Total</th><th>${totalBalance.toFixed(2)}</th><th></th></tr>`;
             table += '</tbody></table>';
             balancesDiv.innerHTML += table;
         } else {
