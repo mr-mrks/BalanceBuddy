@@ -31,8 +31,8 @@ async function fetchCurrentBalances() {
                 table += `<tr><td>${item.name}</td><td>${item.balance}</td><td>${item.entry_date}</td></tr>`;
                 totalBalance += parseFloat(item.balance);
             });
-            table += `<tr><th>Total</th><th>${totalBalance.toFixed(2)}</th><th></th></tr>`;
-            table += '</tbody></table>';
+            // Corrected total row addition:
+            table += `</tbody><tfoot><tr><th>Total</th><th>${totalBalance.toFixed(2)}</th><th></th></tr></tfoot></table>`;
             balancesDiv.innerHTML += table;
         } else {
             console.error('Invalid or empty data received from get_current_balances.php');
