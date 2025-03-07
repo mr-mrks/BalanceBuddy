@@ -28,12 +28,14 @@
         </div>
 
         <div id="add-account-form" class="form-container">
-            <form action="api/add_account.php" method="POST">
-                <label for="new-account-name">Account Name:</label>
-                <input type="text" name="name"><br>
-                <button type="submit">Add Account</button>
-            </form>
-        </div>
+    <form action="api/add_account.php" method="POST">
+        <label for="new-account-name">Account Name:</label>
+        <input type="text" name="name"><br>
+        <label for="account-color">Account Color:</label>
+        <input type="color" name="color" value="#007bff"><br>
+        <button type="submit">Add Account</button>
+    </form>
+</div>
 
         <div id="add-balance-form" class="form-container active">
             <form action="api/add_balance.php" method="POST">
