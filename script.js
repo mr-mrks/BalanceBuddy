@@ -28,7 +28,7 @@ async function fetchCurrentBalances() {
             let table = '<table><thead><tr><th>Account</th><th>Balance</th><th>Last Updated</th></tr></thead><tbody>';
             let totalBalance = 0;
             data.data.forEach(item => {
-                table += `<tr><td>${item.name}</td><td>${item.balance}</td><td>${item.entry_date}</td></tr>`;
+                table += `<tr><td>${item.name}</td><td>${parseFloat(item.balance).toFixed(2)}</td><td>${item.entry_date}</td></tr>`;
                 totalBalance += parseFloat(item.balance);
             });
             // Corrected total row addition:
