@@ -81,7 +81,15 @@ async function fetchBalanceData(startDate, endDate) {
             }
         }
 
-        const labels = Object.keys(monthlyData).sort();
+        const labels = Object.keys(monthlyData).sort((a, b) => {
+            const [yearA, monthA] = a.split('-').map(Number);
+            const [yearB, monthB] = b.split('-').map(Number);
+            if (yearA !== yearB) {
+                return yearA - yearB;
+            } else {
+                return monthA - monthB;
+            }
+        });
 
         accountsData.data.forEach(account => {
             const data = [];
