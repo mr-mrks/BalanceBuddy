@@ -1,21 +1,129 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
+    margin: 16px;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+h1, h2 {
+    margin-bottom: 16px;
+    color: #212529;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 table {
-    border-collapse: collapse;
     width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 15px;
     text-align: left;
 }
 
-th {
-    background-color: #f2f2f2;
+th, tfoot th {
+    background-color: #e0f7fa;
 }
-#add-account-form, #add-balance-form, #update-balance-form{
-    margin-top: 20px;
+
+#chart-container {
+    width: 66.66%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#form-container {
+    width: 33.33%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#balanceChart {
+    width: 100% !important;
+    margin-bottom: 20px;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.chart-controls label,
+.chart-controls input,
+.chart-controls button {
+    margin: 0 5px;
+}
+
+.form-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    display: none;
+}
+
+.form-container.active {
+    display: block;
+}
+
+#current-balances {
+    width: 66.66%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #chart-container,
+    #form-container,
+    #current-balances {
+        width: 100%;
+    }
 }
